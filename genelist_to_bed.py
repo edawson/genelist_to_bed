@@ -1,8 +1,29 @@
 import sys
 import pyensembl
 
+def gene_to_interval(gene, release=75):
+    data = pyensembl.EnsemblRelease(release)
+    ret = None
+    try:
+        ret = data.genes_by_name(gene)[0]
+    except:
+        sys.stderr.write(" ".join(["Gene not found: ", gene, "\n"]))
+    if ret is not None:
+        return (str(ret.contig), str(ret.start), str(ret.end), str(ret.name))
+    else:
+        return ret
+
+
+def genes_to_intervals(gene_list):
+    gti = gene_to_interval
+    ret = []
+    for i in gene_list:
+        r = gti(i)
+        if r is not None:
+            ret.append(r)
+    return ret
+
 if __name__ == "__main__":
-    data = pyensembl.EnsemblRelease(75)
     
     g_list = []
     gen_l = []
@@ -11,10 +32,6 @@ if __name__ == "__main__":
             tokens = line.strip().split()
             g = tokens[0]
             g_list.append(g)
-    for i in g_list:
-        try:
-            gen_l.append(data.genes_by_name(i)[0])
-        except:
-            sys.stderr.write(" ".join(["Gene not found: ", i, "\n"])) 
-    for i in gen_l:
-        print "\t".join([str(i.contig), str(i.start), str(i.end), str(i.name)])
+    r = genes_to_intervals(g_list)
+    for i in r:
+        print "\t".join(i)
