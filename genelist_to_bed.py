@@ -23,6 +23,7 @@ def genes_to_intervals(gene_list):
             ret.append(r)
     return ret
 
+
 if __name__ == "__main__":
     
     g_list = []
